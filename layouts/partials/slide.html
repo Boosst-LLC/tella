@@ -1,14 +1,21 @@
 <div class="swiper-container">
-    <div class="swiper-wrapper">
-        {{ range .Site.Data.slide }}
-        <div class="swiper-slide">
-            <img src="{{ .image }}" alt="{{ .alt }}">
-            <div class="s-fade-txt">
-                <h1 class="text-4xl {{ or .color "text-white" }}">{{ .title }}</h1>
-            </div>
+  <div class="swiper-wrapper">
+    {{ range $i, $slide := .Site.Data.slide }}
+      {{- $alt := or $slide.alt $slide.title -}}
+      <div class="swiper-slide">
+        <img
+          src='{{ $slide.image | relURL }}'
+          alt='{{ $alt }}'
+          decoding="async"
+          sizes="100vw"
+          class="w-full h-auto"
+          {{ if eq $i 0 }}fetchpriority="high"{{ else }}loading="lazy"{{ end }}>
+        <div class="s-fade-txt">
+          <h1 class="text-4xl {{ or $slide.color "text-white" }}">{{ $slide.title }}</h1>
         </div>
-        {{ end }}
-    </div>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
+      </div>
+    {{ end }}
+  </div>
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
 </div>
