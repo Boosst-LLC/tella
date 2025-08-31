@@ -17,33 +17,50 @@
 <link rel="icon" type="image/png" sizes="16x16" href='{{ "favicon-16x16.png" | relURL }}'>
 <link rel="manifest" href='{{ "site.webmanifest" | relURL }}'>
 
-<!-- Preconnects: Cloudinary images + Google Fonts -->
+<!-- Preconnects -->
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-{{/* OPTIONAL: Font Awesome + Material Symbols (non-blocking load) */}}
-{{ if .Site.Params.icon.fontawesome }}
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
+<!-- Montserrat & Open Sans (non-blocking load) -->
+{{ if .Site.Params.googleFonts }}
+  <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap">
+  </noscript>
+{{ else }}
+  <link rel="preload" as="style" href='{{ "/css/webfonts.min.css" | relURL }}'
+        onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href='{{ "/css/webfonts.min.css" | relURL }}'></noscript>
+{{ end }}
 
-  <!-- Google Material Symbols Outlined (add display=swap to avoid FOIT) -->
-  {{/* note: this CSS file is tiny; still load non-blocking for consistency */}}
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" rel="stylesheet"></noscript>
+<!-- Optional: Font Awesome + Material Symbols -->
+{{ if .Site.Params.icon.fontawesome }}
+  <link rel="preload" as="style"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet"
+                 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
+
+  <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet"
+                 href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap"></noscript>
 
   <style>
-    .material-symbols-outlined{
+    .material-symbols-outlined {
       font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
-      font-size:1.5rem;vertical-align:middle;
+      font-size:1.5rem;
+      vertical-align:middle;
     }
   </style>
 {{ end }}
 
-{{/* ---- MAIN SITE CSS (Hugo Pipes) ----
-     For dev: normal <link>.
-     For prod: preload → swap to avoid render-blocking.
-*/}}
+<!-- Main site CSS (Hugo Pipes) -->
 {{ $styles := resources.Get "css/style.css" | postCSS }}
 {{ if hugo.IsServer }}
   <link rel="stylesheet" href="{{ $styles.RelPermalink }}">
@@ -53,9 +70,7 @@
   <noscript><link rel="stylesheet" href="{{ $styles.RelPermalink }}"></noscript>
 {{ end }}
 
-{{/* ---- EXTRA LOCAL CSS (load non-blocking) ----
-     If these are required, keep them; otherwise consider merging into style.css.
-*/}}
+<!-- Extra CSS (non-blocking) -->
 {{ if .IsHome }}
   <link rel="preload" as="style" href='{{ "/css/swiper-bundle.min.css" | relURL }}' onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href='{{ "/css/swiper-bundle.min.css" | relURL }}'></noscript>
