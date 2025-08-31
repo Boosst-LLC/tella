@@ -1,22 +1,35 @@
 <div class="swiper-container">
+  <!-- Reserve aspect-ratio space BEFORE images/JS load -->
   <style>
-    /* Reserve hero height to prevent CLS */
     .swiper-container {
-      aspect-ratio: 16 / 9;         /* reserve space at 16:9 */
+      position: relative;
       width: 100%;
+      max-width: 100%;
     }
-    .swiper-container .swiper-wrapper,
-    .swiper-container .swiper-slide {
+    /* 16:9 placeholder box; change 56.25% if you want a different ratio */
+    .swiper-container::before {
+      content: "";
+      display: block;
+      padding-top: 56.25%; /* 9/16 = 0.5625 */
+    }
+    /* Absolutely position the real slider to fill the reserved box */
+    .swiper-wrapper {
+      position: absolute !important;
+      inset: 0;
+      height: 100%;
+    }
+    .swiper-slide {
       height: 100%;
     }
     .swiper-container img {
+      display: block;
       width: 100%;
       height: 100%;
-      object-fit: cover;             /* crop to fill the box */
-      display: block;
+      object-fit: cover; /* mixed-aspect sources fill consistently */
     }
+    /* Optional: make mobile a bit taller if you like */
     @media (max-width: 640px) {
-      .swiper-container { aspect-ratio: 4 / 3; } /* optional: taller on mobile */
+      .swiper-container::before { padding-top: 62.5%; } /* ~16:10 */
     }
   </style>
 
