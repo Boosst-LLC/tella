@@ -1,4 +1,25 @@
 <div class="swiper-container">
+  <style>
+    /* Reserve hero height to prevent CLS */
+    .swiper-container {
+      aspect-ratio: 16 / 9;         /* reserve space at 16:9 */
+      width: 100%;
+    }
+    .swiper-container .swiper-wrapper,
+    .swiper-container .swiper-slide {
+      height: 100%;
+    }
+    .swiper-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;             /* crop to fill the box */
+      display: block;
+    }
+    @media (max-width: 640px) {
+      .swiper-container { aspect-ratio: 4 / 3; } /* optional: taller on mobile */
+    }
+  </style>
+
   <div class="swiper-wrapper">
     {{ range $i, $slide := .Site.Data.slide }}
       {{- $alt := or $slide.alt $slide.title -}}
@@ -8,7 +29,6 @@
           alt='{{ $alt }}'
           decoding="async"
           sizes="100vw"
-          class="w-full h-auto"
           {{ if eq $i 0 }}fetchpriority="high"{{ else }}loading="lazy"{{ end }}>
         <div class="s-fade-txt">
           <h1 class="text-4xl {{ or $slide.color "text-white" }}">{{ $slide.title }}</h1>
@@ -16,6 +36,7 @@
       </div>
     {{ end }}
   </div>
+
   <div class="swiper-button-prev"></div>
   <div class="swiper-button-next"></div>
 </div>
