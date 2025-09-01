@@ -1,14 +1,45 @@
 <div class="swiper-container">
-    <div class="swiper-wrapper">
-        {{ range .Site.Data.slide }}
-        <div class="swiper-slide">
-            <img src="{{ .image }}" alt="{{ .alt }}">
-            <div class="s-fade-txt">
-                <h1 class="text-4xl {{ or .color "text-white" }}">{{ .title }}</h1>
-            </div>
+  <div class="swiper-wrapper">
+    {{ range $i, $slide := .Site.Data.slide }}
+      {{- $alt := or $slide.alt $slide.title -}}
+      {{- $path := $slide.image | relURL -}}
+
+      <div class="swiper-slide">
+        {{- if hugo.IsServer }}
+          <!-- Local dev: plain paths so hugo server works without Cloudinary -->
+          <img
+            src="{{ $path }}"
+            alt="{{ $alt }}"
+            decoding="async"
+            sizes="100vw"
+            class="w-full h-auto"
+            {{ if eq $i 0 }}fetchpriority="high"{{ else }}loading="lazy"{{ end }}>
+        {{- else }}
+          <!-- Production: Cloudinary fetch with responsive srcset -->
+          {{- $cloud := "dvazbzhbi" -}}  {{/* your Cloudinary cloud name */}}
+          {{- $base := $.Site.BaseURL | strings.TrimRight "/" -}}
+          {{- $origin := printf "%s%s" $base $path -}}
+          <img
+            src="https://res.cloudinary.com/{{ $cloud }}/image/fetch/f_auto,q_auto,c_limit,w_1200/{{ $origin }}"
+            srcset="
+              https://res.cloudinary.com/{{ $cloud }}/image/fetch/f_auto,q_auto,c_limit,w_480/{{ $origin }} 480w,
+              https://res.cloudinary.com/{{ $cloud }}/image/fetch/f_auto,q_auto,c_limit,w_800/{{ $origin }} 800w,
+              https://res.cloudinary.com/{{ $cloud }}/image/fetch/f_auto,q_auto,c_limit,w_1200/{{ $origin }} 1200w,
+              https://res.cloudinary.com/{{ $cloud }}/image/fetch/f_auto,q_auto,c_limit,w_1600/{{ $origin }} 1600w"
+            sizes="100vw"
+            alt="{{ $alt }}"
+            decoding="async"
+            class="w-full h-auto"
+            {{ if eq $i 0 }}fetchpriority="high"{{ else }}loading="lazy"{{ end }}>
+        {{- end }}
+
+        <div class="s-fade-txt">
+          <h1 class="text-4xl {{ or $slide.color "text-white" }}">{{ $slide.title }}</h1>
         </div>
-        {{ end }}
-    </div>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
+      </div>
+    {{ end }}
+  </div>
+
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
 </div>
